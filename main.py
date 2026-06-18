@@ -1,4 +1,14 @@
+import sys
+import select
+
 from task_manager.task_utils import add_task, mark_task_as_complete, view_pending_tasks, calculate_progress
+
+
+def stdin_has_data():
+    if sys.stdin.isatty():
+        return True
+    ready, _, _ = select.select([sys.stdin], [], [], 0)
+    return bool(ready)
 
 
 def display_menu():
@@ -23,22 +33,47 @@ def display_tasks(tasks):
         print(f"   Due date: {task['due_date']}")
 
 
+def safe_input(prompt):
+    try:
+        return input(prompt)
+    except EOFError:
+        return None
+
+
 def prompt_for_task_details():
-    title = input("Enter task title: ").strip()
-    description = input("Enter task description: ").strip()
-    due_date = input("Enter due date (YYYY-MM-DD): ").strip()
-    return title, description, due_date
+    title = safe_input("Enter task title: ")
+    if title is None:
+        return None, None, None
+
+    description = safe_input("Enter task description: ")
+    if description is None:
+        return None, None, None
+
+    due_date = safe_input("Enter due date (YYYY-MM-DD): ")
+    if due_date is None:
+        return None, None, None
+
+    return title.strip(), description.strip(), due_date.strip()
 
 
 def main():
     tasks = []
 
     while True:
+        if not sys.stdin.isatty() and not stdin_has_data():
+            break
+
         display_menu()
-        choice = input("Choose an option (1-6): ").strip()
+        choice = safe_input("Choose an option (1-6): ")
+        if choice is None:
+            break
+        choice = choice.strip()
 
         if choice == "1":
             title, description, due_date = prompt_for_task_details()
+            if title is None:
+                break
+
             success, message = add_task(tasks, title, description, due_date)
             print(message)
 
@@ -48,7 +83,10 @@ def main():
                 continue
 
             display_tasks(tasks)
-            selected = input("Enter the number of the task to mark complete: ").strip()
+            selected = safe_input("Enter the number of the task to mark complete: ")
+            if selected is None:
+                break
+            selected = selected.strip()
             if not selected.isdigit():
                 print("Please enter a valid task number.")
                 continue
