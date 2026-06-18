@@ -5,12 +5,17 @@ def add_task(tasks, title, description, due_date):
     if not isinstance(tasks, list):
         raise TypeError("tasks must be a list")
 
-    try:
-        validate_task_title(title)
-        validate_task_description(description)
-        validate_due_date(due_date)
-    except ValueError as error:
-        return False, str(error)
+    valid, message = validate_task_title(title)
+    if not valid:
+        return False, message
+
+    valid, message = validate_task_description(description)
+    if not valid:
+        return False, message
+
+    valid, message = validate_due_date(due_date)
+    if not valid:
+        return False, message
 
     task = {
         "title": title.strip(),
