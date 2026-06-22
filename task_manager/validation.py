@@ -16,6 +16,8 @@ def validate_task_description(description):
         return False, "Task description must be a non-empty string."
     if len(description) == 0 or len(description.strip()) == 0:
         return False, "Task description must be a non-empty string."
+    if len(description) > 500:
+        return False, "Task description cannot exceed 500 characters."
     if len(description.strip()) > 255:
         return False, "Task description must be 255 characters or fewer."
     return True, ""
