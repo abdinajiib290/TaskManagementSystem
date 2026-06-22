@@ -1,21 +1,19 @@
-from .validation import validate_task_title, validate_task_description, validate_due_date
+from .validation import (
+    validate_task,
+    validate_task_title,
+    validate_task_description,
+    validate_due_date,
+)
 
 
 def add_task(tasks, title, description, due_date):
     if not isinstance(tasks, list):
         raise TypeError("tasks must be a list")
 
-    valid, message = validate_task_title(title)
-    if not valid:
-        return False, message
-
-    valid, message = validate_task_description(description)
-    if not valid:
-        return False, message
-
-    valid, message = validate_due_date(due_date)
-    if not valid:
-        return False, message
+    try:
+        validate_task(title, description, due_date)
+    except ValueError as exc:
+        return False, str(exc)
 
     task = {
         "title": title.strip(),
@@ -49,7 +47,7 @@ def calculate_progress(tasks):
     if not isinstance(tasks, list):
         raise TypeError("tasks must be a list")
 
-    if not tasks:
+    if len(tasks) == 0:
         return 0.0
 
     completed_count = sum(1 for task in tasks if task.get("completed", False))
