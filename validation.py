@@ -2,18 +2,12 @@ from datetime import datetime
 
 
 def validate_task(title, description, due_date):
-    if not isinstance(title, str):
-        raise ValueError("Title must be a string")
     if len(title) == 0:
         raise ValueError("Title cannot be empty")
 
-    if not isinstance(description, str):
-        raise ValueError("Description must be a string")
     if len(description) == 0:
         raise ValueError("Description cannot be empty")
 
-    if not isinstance(due_date, str):
-        raise ValueError("Due date must be a string")
     if len(due_date) == 0:
         raise ValueError("Due date cannot be empty")
 
