@@ -42,9 +42,10 @@ def calculate_progress(tasks):
     if len(tasks) == 0:
         return 0.0
 
-    completed = 0
+    completed_tasks = 0
+
     for task in tasks:
         if task["completed"]:
-            completed += 1
+            completed_tasks += 1
 
-    return (completed / len(tasks)) * 100
+    return (completed_tasks / len(tasks)) * 100
